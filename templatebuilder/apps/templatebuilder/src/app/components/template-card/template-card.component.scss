@@ -1,0 +1,11 @@
+@import '../../styles/variables.scss';
+
+.template-card {
+  // NOTE 3 * 16px
+  width: 3rem;
+  height: 3rem;
+
+  .template-card__title {
+    background-color: $secondary-background-color;
+  }
+}
