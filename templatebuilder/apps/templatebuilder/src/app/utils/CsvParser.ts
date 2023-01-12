@@ -1,11 +1,13 @@
+import { Injectable } from "@angular/core"
 import { parse } from "papaparse"
+
 /**
  * Converts csv to json
  * @param file CSV file
  */
-export function CsvParser(file: File) {
+export class CsvParser {
 
-  return parse(file, {
+  parseCsv = (file: File) => parse(file, {
     skipEmptyLines: false,
     complete: (results, _) => {
       console.log("complete() called")

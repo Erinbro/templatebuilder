@@ -1,0 +1,13 @@
+.template-list {
+  width: 100%;
+  height: 100%;
+  display: grid;
+
+  .template-list__btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .template-list__cards {
+  }
+}

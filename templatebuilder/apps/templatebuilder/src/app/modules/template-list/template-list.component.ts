@@ -1,16 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { CsvParser } from '../../services';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'templatebuilder-template-list',
   templateUrl: './template-list.component.html',
   styleUrls: ['./template-list.component.scss'],
 })
-export class TemplateListComponent implements OnInit {
-  constructor() { }
+export class TemplateListComponent {
+  addBtnContent = "Add Template"
 
-  ngOnInit(): void { }
+  constructor(private router: Router) {
 
+  }
 
-
+  navigateToGenerate() {
+    this.router.navigate(["generate"])
+  }
 }

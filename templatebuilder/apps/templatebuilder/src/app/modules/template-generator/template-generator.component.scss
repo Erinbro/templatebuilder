@@ -1,0 +1,19 @@
+.template-generator {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  .template-generator__form {
+  }
+  .template-generator__page {
+    margin: 3rem;
+    width: 80%;
+    height: 70%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+    canvas {
+    }
+  }
+}

@@ -1,0 +1,11 @@
+<div class="template-generator" #templateGenerator>
+  <div class="template-generator__form"></div>
+  <div
+    class="template-generator__page"
+    #page
+    (mousedown)="drawingRectangle()"
+    cdkDrag="drawingRectangle()"
+    (cdkDragStarted)="changePosition($event)"
+    (cdkDragEnded)="changePosition($event)"
+  ></div>
+</div>
