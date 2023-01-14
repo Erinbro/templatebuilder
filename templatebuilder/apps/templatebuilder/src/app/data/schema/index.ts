@@ -1,3 +1,5 @@
 import { ITemplate } from "./ITemplate"
+import { IDataQuery } from "./IDataQuery"
+import { IExtendedStage } from "./IExtendedStage"
 
-export { ITemplate }
+export { ITemplate, IDataQuery, IExtendedStage }

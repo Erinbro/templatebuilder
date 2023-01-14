@@ -1,19 +1,33 @@
+@import '../../styles/variables.scss';
+
+$page-ratio-width: 210 / 297;
+$page-ratio-height: 297 / 210;
+
 .template-generator {
   width: 100%;
   height: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  .template-generator__form {
+  grid-template-rows: 20% 80%;
+  justify-items: center;
+  align-items: center;
+
+  .generator__form {
+    width: 100%;
+    height: 100%;
   }
-  .template-generator__page {
-    margin: 3rem;
-    width: 80%;
-    height: 70%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 1px solid black;
-    canvas {
+
+  .stage__parent {
+    width: 100%;
+    height: 100%;
+    .page__container {
+      width: 100%;
+      height: 100%;
+
+      .rectangle__template {
+        &:hover {
+          cursor: move;
+        }
+      }
     }
   }
 }

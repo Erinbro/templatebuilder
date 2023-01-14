@@ -2,19 +2,17 @@ import { createReducer, on } from '@ngrx/store';
 import { ITemplate } from '../../data/schema/ITemplate';
 import * as templateStoreActions from "./template.actions"
 
-const templateFeatureName = 'template';
+export const templateFeatureName = 'template';
 
-interface ITemplateStore {
+export interface ITemplateStore {
   // NOTE The data from the csv file
-  data: {
-    [id: number]: ITemplate
-  }
+  template?: ITemplate
   loading: boolean,
   error: ''
 }
 
 const initialTemplateState: ITemplateStore = {
-  data: {},
+  template: undefined,
   loading: false,
   error: ''
 }
@@ -27,14 +25,28 @@ export const templateReducer = createReducer(
       loading: true
     }
   }),
-  on(templateStoreActions.LOAD_TEMPLATES_SUCCESS, (state, { data }) => {
-    data.forEach((d, i) => {
-      dataObject['i'] = d
-    })
+  on(templateStoreActions.LOAD_TEMPLATES_SUCCESS, (state, { template }) => {
+    const stateCopy = JSON.parse(JSON.stringify(state)) as ITemplateStore
+    stateCopy.template = template
 
-    return {
-      ...state,
-      data
+    return stateCopy
+  }),
+  on(templateStoreActions.ADD_TEMPLATE_DATA, (state, { data }) => {
+    const stateCopy = JSON.parse(JSON.stringify(state)) as ITemplateStore
+
+    if (stateCopy.template) {
+      stateCopy.template.data = data
     }
-  })
+
+    return stateCopy
+  }),
+  on(templateStoreActions.ADD_TEMPLATE, (state, { template }) => {
+    const stateCopy = JSON.parse(JSON.stringify(state)) as ITemplateStore
+
+    if (!stateCopy.template) {
+      stateCopy.template = template
+    }
+
+    return stateCopy
+  }),
 )

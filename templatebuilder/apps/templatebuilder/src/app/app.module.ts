@@ -10,7 +10,13 @@ import { BtnPrimaryComponent } from './shared/buttons/button-primary/btn-primary
 import { AppRoutingModule } from './app-routing.module';
 import { TemplateGeneratorComponent } from './modules/template-generator/template-generator.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { DragDropModule } from "@angular/cdk/drag-drop"
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { GeneratorUtils } from './utils/GeneratorUtils';
+import { StoreModule } from '@ngrx/store';
+import { reducers } from './state/reducer';
+import { environment } from '../environments/environment';
+import { StoreDevtools, StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { DataDialogComponent } from './modules/template-generator/components/DataDialog/data-dialog.component';
 
 @NgModule({
   declarations: [
@@ -20,11 +26,18 @@ import { DragDropModule } from "@angular/cdk/drag-drop"
     BtnSecondaryComponent,
     BtnPrimaryComponent,
     TemplateGeneratorComponent,
+    DataDialogComponent,
   ],
-  imports: [BrowserModule, AppRoutingModule, TemplateListModule, BrowserAnimationsModule,
-    DragDropModule
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    TemplateListModule,
+    BrowserAnimationsModule,
+    DragDropModule,
+    StoreModule.forRoot(reducers),
+    !environment.production ? StoreDevtoolsModule.instrument() : [],
   ],
   providers: [],
   bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

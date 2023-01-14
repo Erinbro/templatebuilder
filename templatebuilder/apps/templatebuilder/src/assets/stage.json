@@ -1,0 +1,39 @@
+{
+  "attrs": { "width": 738.421875, "height": 867.4375 },
+  "className": "Stage",
+  "children": [
+    { "attrs": {}, "className": "Layer", "children": [] },
+    { "attrs": {}, "className": "Layer", "children": [] },
+    {
+      "attrs": {},
+      "className": "Layer",
+      "children": [
+        {
+          "attrs": { "draggable": true },
+          "className": "Group",
+          "children": [
+            {
+              "attrs": {
+                "width": 205.1787109375,
+                "height": 34,
+                "fill": "transparent",
+                "stroke": "black",
+                "strokeWidth": 3
+              },
+              "className": "Rect"
+            },
+            {
+              "attrs": {
+                "fontSize": 14,
+                "text": "Jaime is the best programmer",
+                "fill": "black",
+                "padding": 10
+              },
+              "className": "Text"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

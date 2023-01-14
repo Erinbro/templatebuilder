@@ -1,7 +1,15 @@
-import { DragRef } from '@angular/cdk/drag-drop';
+import { CdkDrag, CdkDragEnd, CdkDragEnter, CdkDragStart, DragRef } from '@angular/cdk/drag-drop';
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Application, Graphics, Text } from 'pixi.js';
+import Konva from 'konva';
 import { BehaviorSubject, Subscription } from 'rxjs';
+import { GeneratorUtils } from '../../utils/GeneratorUtils';
+import { jsPDF } from "jspdf"
+import html2canvas from 'html2canvas';
+import { Store } from '@ngrx/store';
+import { ADD_TEMPLATE } from '../../state/template/template.actions';
+import { ITemplate } from '../../data/schema/ITemplate';
+import { templateStorage, TemplateStorage } from '../../storage/storage';
+import { Stage } from 'konva/lib/Stage';
 
 @Component({
   selector: 'templatebuilder-template-generator',
@@ -9,84 +17,93 @@ import { BehaviorSubject, Subscription } from 'rxjs';
   styleUrls: ['./template-generator.component.scss'],
 })
 export class TemplateGeneratorComponent implements OnInit, OnDestroy {
-  public app!: Application;
-  mouseX: number | undefined;
-  mouseY: number | undefined;
-  rectangles = new BehaviorSubject<{ [id: number]: Graphics }>({})
-  rectangleRef!: DragRef
-  page!: ElementRef
+  /**
+   * A4 format
+   */
+  pageRatio = { width: 210, height: 297 }
+  /**
+   * Multiply this with the width when scalling
+   */
+  pageRatioWidth = 210 / 297
+  /**
+   * Multiply this with the height when scalling
+   */
+  pageRatioHeight = 297 / 210
+
+  rectangles = new BehaviorSubject<{ [id: number]: Konva.Rect }>({})
+  rectangleList = new BehaviorSubject<Konva.Rect[]>([])
 
 
-  constructor(private elementRef: ElementRef) { }
+  pageContainer!: HTMLDivElement
+  konvaPage!: HTMLCanvasElement
+  stage!: Konva.Stage;
+  htmlRectangleTemplate!: HTMLDivElement
+
+
+  constructor(private elementRef: ElementRef, private generatorUtils: GeneratorUtils, private store: Store, private templateStorage: TemplateStorage) { }
 
 
   ngOnInit(): void {
-    this.app = new Application({ backgroundColor: "white", });
-    console.log("div: ", this.elementRef.nativeElement.querySelector('.template-generator__page'))
-    this.page = this.elementRef.nativeElement.querySelector(".template-generator__page")
-    this.elementRef.nativeElement.querySelector(".template-generator__page").appendChild(this.app.view)
 
-    this.init()
-    this.drawRectangle()
-    this.insertText(this.rectangles.getValue()[0])
-  }
+    /**
+     * ANCHOR Save the parent of the canvas
+     */
+    this.pageContainer = this.elementRef.nativeElement.querySelector(".page__container")
 
-  init() {
-    this.app.renderer.resize(200 * window.devicePixelRatio, 300 * window.devicePixelRatio)
-  }
-
-  drawRectangle() {
-    const graphics = new Graphics()
-    graphics.beginFill(0xffffff)
-    graphics.lineStyle(5, 0x000000)
-    graphics.fill.visible = false
-
-    graphics.drawRect(0, 0, 200, 100)
-
-    this.app.stage.addChild(graphics)
-    // NOTE Add to state
-    this.addRectangles(graphics)
-  }
-
-  drawingRectangle() {
-    console.log(`start drawing rectangle `)
-    const graphics = new Graphics()
-    graphics.beginFill(0xffffff)
-    graphics.lineStyle(5, 0x000000)
-    graphics.fill.visible = false
-    graphics.drawRect(0, 0, 200, 100)
-  }
-
-  insertText(graphic: Graphics) {
-    const text = new Text("Jaime is an excellent programmer", {
-      fontFamily: "Arial",
-      fontSize: 33,
-      fill: 0x000000,
-      align: "center"
+    /**
+     * ANCHOR STAGE CREATION
+     */
+    this.stage = new Konva.Stage({
+      container: this.pageContainer,
+      ...this.generatorUtils.getDimensionsForPage(this.pageContainer)
     })
-    this.app.stage.addChild(text)
-  }
 
-  changePosition(e: any) {
-    const elem = e.source.getRootElement();
-    console.log(`position: ${this.getPosition(elem).x}`)
-    console.log("dragged")
-    console.log(`page: ${this.page.nativeElement}`)
-  }
+    this.generatorUtils.drawTemplateRectangle(this.stage)
+    this.generatorUtils.drawTemplateRectangleMove(this.stage)
+    this.stage.draw()
 
-  getPosition(div: HTMLDivElement): { x: number, y: number } {
-    return { x: div.getBoundingClientRect().x, y: div.getBoundingClientRect().y }
-  }
+    console.log(`stage: ${this.stage}`)
 
-  addRectangles(newRectangle: Graphics): void {
-    const before = this.rectangles.getValue()
-    // get id
-    const newId = Object.keys(before).length + 1;
-    before[newId] = newRectangle
+    /**
+     * ANCHOR Save the template to the redux store.
+     * With this the generatorUils service has also access to the stage
+     */
+    this.generatorUtils.saveTemplate(this.stage)
+
+    /**
+     * Save the canvas HTML refernce
+     */
+    this.konvaPage = this.elementRef.nativeElement.querySelector(".page__container canvas")
+
+    console.log(`parent element: ${this.elementRef.nativeElement.getBoundingClientRect().width}`)
+
+
   }
 
   ngOnDestroy(): void {
-    this.app.destroy()
+    this.stage.destroy()
+  }
+
+  // ANCHOR Utility functions
+
+  convertToPdf() {
+    const canvasUrl = this.stage.toCanvas().toDataURL("image/png", 1)
+
+    const doc = new jsPDF({
+      orientation: "portrait",
+      format: "a4",
+      unit: "mm"
+    })
+
+    const width = doc.internal.pageSize.getWidth()
+    const height = doc.internal.pageSize.getHeight()
+
+    doc.addImage(canvasUrl, 'PNG', 0, 0, width, height)
+    doc.save("jaime.pdf")
+  }
+
+  saveTemplate(stage: Stage) {
+    this.generatorUtils.saveTemplate(stage)
   }
 
 }

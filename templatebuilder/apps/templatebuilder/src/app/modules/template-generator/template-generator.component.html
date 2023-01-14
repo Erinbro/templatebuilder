@@ -1,11 +1,11 @@
 <div class="template-generator" #templateGenerator>
-  <div class="template-generator__form"></div>
-  <div
-    class="template-generator__page"
-    #page
-    (mousedown)="drawingRectangle()"
-    cdkDrag="drawingRectangle()"
-    (cdkDragStarted)="changePosition($event)"
-    (cdkDragEnded)="changePosition($event)"
-  ></div>
+  <div class="generator__form">
+    <templatebuilder-btn-secondary content="convert" class="form__convert">
+    </templatebuilder-btn-secondary>
+    <templatebuilder-btn-secondary class="form__save" content="save">
+    </templatebuilder-btn-secondary>
+  </div>
+  <div class="stage__parent">
+    <div class="page__container"></div>
+  </div>
 </div>
