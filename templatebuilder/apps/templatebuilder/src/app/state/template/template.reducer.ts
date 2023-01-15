@@ -6,13 +6,13 @@ export const templateFeatureName = 'template';
 
 export interface ITemplateStore {
   // NOTE The data from the csv file
-  template?: ITemplate
+  template: ITemplate
   loading: boolean,
   error: ''
 }
 
 const initialTemplateState: ITemplateStore = {
-  template: undefined,
+  template: { data: undefined, id: "", title: "", rectangleGroups: [] },
   loading: false,
   error: ''
 }

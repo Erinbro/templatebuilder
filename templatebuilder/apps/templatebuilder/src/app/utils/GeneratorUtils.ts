@@ -10,7 +10,7 @@ import { ITemplateStore } from '../state/template/template.reducer';
 import { Observable } from 'rxjs';
 import { ITemplate } from '../data/schema/ITemplate';
 import { Node } from 'konva/lib/Node';
-import { ADD_TEMPLATE } from '../state/template/template.actions';
+import { ADD_TEMPLATE, UPDATE_TEMPLATE } from '../state/template/template.actions';
 import { jsPDF } from 'jspdf';
 import { Circle } from 'konva/lib/shapes/Circle';
 import { Transformer } from 'konva/lib/shapes/Transformer';
@@ -136,15 +136,16 @@ export class GeneratorUtils {
 
   }
 
-  public drawTemplateRectangleMove(stage: Stage) {
+  public drawTemplateRectangleMove(stage: Stage, openDataDialog: () => void,) {
+    const id = new Date().getTime().toString()
     //  group
     const group = new Group({
       x: 0,
       y: 0,
-      draggable: true
+      draggable: true,
+      id
     })
 
-    group.on("click", this.openDataDialog)
 
     const layer = new Layer()
     const transformer = new Transformer({
@@ -187,6 +188,10 @@ export class GeneratorUtils {
       fontSize: 30
     })
 
+    const templateCopy = { ...this.template }
+    const rectangleGroup = { id, position: }
+    templateCopy.rectangleGroups?.push(group)
+    this.store.dispatch(UPDATE_TEMPLATE({ updatedTemplate: templateCopy }))
 
 
     group.add(...[text, rectangle])
@@ -199,10 +204,11 @@ export class GeneratorUtils {
     })
 
     group.on("dragend", (ev) => {
+      if (this.template?.rectangleGroups.find((r) => r.id === group.id()))
+        group.on("click", () => openDataDialog())
       plusSignGroup.add(...[plusSignText, plusSign])
       group.add(plusSignGroup)
-      transformer.forceUpdate()
-      this.drawTemplateRectangleMove(stage)
+      this.drawTemplateRectangleMove(stage, openDataDialog)
     })
 
     layer.add(group)
@@ -212,7 +218,5 @@ export class GeneratorUtils {
 
 
   // ANCHOR Event Callbacks
-  openDataDialog() {
-    console.log("open data dialog")
-  }
+
 }

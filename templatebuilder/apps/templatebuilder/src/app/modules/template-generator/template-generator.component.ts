@@ -1,5 +1,5 @@
 import { CdkDrag, CdkDragEnd, CdkDragEnter, CdkDragStart, DragRef } from '@angular/cdk/drag-drop';
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import Konva from 'konva';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { GeneratorUtils } from '../../utils/GeneratorUtils';
@@ -10,6 +10,9 @@ import { ADD_TEMPLATE } from '../../state/template/template.actions';
 import { ITemplate } from '../../data/schema/ITemplate';
 import { templateStorage, TemplateStorage } from '../../storage/storage';
 import { Stage } from 'konva/lib/Stage';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from "@angular/material/dialog"
+import { DataDialogComponent } from './components/DataDialog/data-dialog.component';
+
 
 @Component({
   selector: 'templatebuilder-template-generator',
@@ -40,7 +43,7 @@ export class TemplateGeneratorComponent implements OnInit, OnDestroy {
   htmlRectangleTemplate!: HTMLDivElement
 
 
-  constructor(private elementRef: ElementRef, private generatorUtils: GeneratorUtils, private store: Store, private templateStorage: TemplateStorage) { }
+  constructor(private elementRef: ElementRef, private generatorUtils: GeneratorUtils, private store: Store, public dialog: MatDialog) { }
 
 
   ngOnInit(): void {
@@ -59,7 +62,7 @@ export class TemplateGeneratorComponent implements OnInit, OnDestroy {
     })
 
     this.generatorUtils.drawTemplateRectangle(this.stage)
-    this.generatorUtils.drawTemplateRectangleMove(this.stage)
+    this.generatorUtils.drawTemplateRectangleMove(this.stage, () => this.openDataDialog(this.dialog))
     this.stage.draw()
 
     console.log(`stage: ${this.stage}`)
@@ -104,6 +107,17 @@ export class TemplateGeneratorComponent implements OnInit, OnDestroy {
 
   saveTemplate(stage: Stage) {
     this.generatorUtils.saveTemplate(stage)
+  }
+
+  openDataDialog(dialog: MatDialog) {
+    dialog.open(DataDialogComponent, { disableClose: true, data: { text: "" } }).afterClosed()
+      .subscribe((result) => {
+        this.addTextToRect(result.text)
+      })
+  }
+
+  addTextToRect(text: string) {
+    console.log(`add text: ${text}`)
   }
 
 }

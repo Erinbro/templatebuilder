@@ -1,1 +1,8 @@
-<p>data-dialog works!</p>
+<mat-dialog-content class="data-dialog">
+  <button class="close" (click)="closeDialog()">X</button>
+  <mat-form-field>
+    <mat-label>Text</mat-label>
+    <input matInput (input)="changeText($event)" />
+  </mat-form-field>
+  <h3>Select The Data</h3>
+</mat-dialog-content>
