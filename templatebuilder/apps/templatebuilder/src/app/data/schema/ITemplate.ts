@@ -20,5 +20,6 @@ export interface IRectangleGroup {
   text: string;
   textId: string;
   plusSignGroupId: string;
+  plusSignRemoved: boolean
 }
 

@@ -58,7 +58,9 @@ export class TemplateGeneratorComponent implements OnInit, OnDestroy {
      */
     this.stage = new Konva.Stage({
       container: this.pageContainer,
-      ...this.generatorUtils.getDimensionsForPage(this.pageContainer)
+      width: this.pageContainer.getBoundingClientRect().width,
+      height: this.pageContainer.getBoundingClientRect().height,
+      // ...this.generatorUtils.getDimensionsForPage(this.pageContainer)
     })
 
     // share stage

@@ -16,6 +16,7 @@ import { Circle } from 'konva/lib/shapes/Circle';
 import { Transformer } from 'konva/lib/shapes/Transformer';
 import { nanoid } from 'nanoid';
 import { MatDialog } from '@angular/material/dialog';
+import { Shape, ShapeConfig } from 'konva/lib/Shape';
 
 @Injectable({
   providedIn: "root"
@@ -55,17 +56,19 @@ export class GeneratorUtils {
 
     const canvasUrl = this.stage.toCanvas().toDataURL("image/png", 1)
 
-    const doc = new jsPDF({
-      orientation: "portrait",
-      format: "a4",
-      unit: "mm"
-    })
+    // const doc = new jsPDF({
+    //   orientation: "portrait",
+    //   format: "a4",
+    //   unit: "mm",
+    // })
 
+    const doc = new jsPDF("p", "pt", [595.28, 841.89])
 
     for (let i = 0; i < this.rectangleGroups.length; i++) {
       const r = this.rectangleGroups[i];
 
       console.log(`convertToPdf: ${r.position.x}, ${r.position.y}`);
+      // doc.html()
 
       doc.text(r.text, r.position.x, r.position.y)
     }
@@ -233,6 +236,19 @@ export class GeneratorUtils {
       document.body.style.cursor = "default"
     })
 
+    group.on("dragmove", (ev) => {
+      this.selectedRectangleGroupId = ev.currentTarget.id();
+      this.updateRectangleGroupPosition(ev.currentTarget)
+      this.limitRectangleGroup(ev.currentTarget)
+    })
+
+    group.on("transform", (ev) => {
+
+
+      // TODO do
+      // this.resizeRectangle
+    })
+
     group.on("dragend", (ev) => {
 
       // NOTE If we have already the group saved then we do not add anything!!!
@@ -245,7 +261,7 @@ export class GeneratorUtils {
       const id = ev.target.id()
 
       // Gather all essential information
-      const rectangleGroup = { position: { x, y }, id, text: "", dragged: false, textId, plusSignGroupId }
+      const rectangleGroup = { position: { x, y }, id, text: "", dragged: false, textId, plusSignGroupId, plusSignRemoved: false }
       // NOTE Add to rectangleGroups to track it
       this.rectangleGroups.push(rectangleGroup)
 
@@ -259,10 +275,48 @@ export class GeneratorUtils {
       group.add(plusSignGroup)
 
       this.drawTemplateRectangleMove(stage, openDataDialog)
+      this.selectedRectangleGroupId = undefined
     })
 
     layer.add(group)
     stage.add(layer)
+  }
+
+  private updateRectangleGroupPosition(movedRectangleGroup: any) {
+    const selectedRectangleGroupIndex = this.rectangleGroups.findIndex((r) => r.id === movedRectangleGroup)
+
+    this.rectangleGroups[selectedRectangleGroupIndex] = movedRectangleGroup
+
+  }
+
+  private limitRectangleGroup(rectangleGroup: any) {
+
+    console.log(`limit`);
+
+    const widthLimit = this.stage.width()
+    const heightLimit = this.stage.height()
+
+    const rectangleInGroup = rectangleGroup.find((n: any) => n.className === "Rect")[0]
+
+    const rectangleGroupWidth = rectangleInGroup.width()
+    const rectangleGroupHeight = rectangleInGroup.height()
+
+    const { x, y } = rectangleGroup.position()
+
+
+
+    if (widthLimit < x + rectangleGroupWidth) {
+      rectangleGroup.x(widthLimit - rectangleGroupWidth)
+    }
+    if (x < 0) {
+      rectangleGroup.x(0)
+    }
+    if (y + rectangleGroupHeight > heightLimit) {
+      rectangleGroup.y(y - rectangleGroupHeight)
+    }
+    if (y < 0) {
+      rectangleGroup.y(0)
+    }
   }
 
   findText(stage: Stage): Text {
@@ -276,6 +330,10 @@ export class GeneratorUtils {
     })
 
     return selectedText[0] as Text
+  }
+
+  private resizeRectangle() {
+
   }
 
   addText(stage: Stage, text: string): void {
@@ -298,6 +356,10 @@ export class GeneratorUtils {
     const selectedRectangleGroup = this.getSelectedRectangleGroup()
     if (!selectedRectangleGroup) throw Error("[GeneratorUtils.removePlusSign] No selectedRectangleGroup!")
 
+    if (selectedRectangleGroup.plusSignRemoved) return
+    selectedRectangleGroup.plusSignRemoved = true
+
+
     const plusSignGroupId = selectedRectangleGroup.plusSignGroupId
 
     this.destroyElementInStage(stage, plusSignGroupId)
@@ -313,11 +375,10 @@ export class GeneratorUtils {
     this.rectangleGroups[id] = updatedRectangleGroup
   }
 
-  destroyElementInStage(stage: Stage, id: string) {
+  private destroyElementInStage(stage: Stage, id: string) {
     const elementToDestroy = this.stage.find((e: any) => {
       return e.id() === id
     })
-
     elementToDestroy[0].destroy();
   }
 
