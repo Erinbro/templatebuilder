@@ -20,8 +20,8 @@ $page-ratio-height: 297 / 210;
     width: 100%;
     height: 100%;
     .page__container {
-      width: 100%;
-      height: 100%;
+      width: 210mm;
+      height: 297mm;
 
       .rectangle__template {
         &:hover {

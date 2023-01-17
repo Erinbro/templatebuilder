@@ -1,6 +1,10 @@
 <div class="template-generator" #templateGenerator>
   <div class="generator__form">
-    <templatebuilder-btn-secondary content="convert" class="form__convert">
+    <templatebuilder-btn-secondary
+      content="convert"
+      class="form__convert"
+      (clicked)="convertToPdf()"
+    >
     </templatebuilder-btn-secondary>
     <templatebuilder-btn-secondary class="form__save" content="save">
     </templatebuilder-btn-secondary>

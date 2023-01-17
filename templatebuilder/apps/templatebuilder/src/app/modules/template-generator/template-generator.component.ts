@@ -61,6 +61,9 @@ export class TemplateGeneratorComponent implements OnInit, OnDestroy {
       ...this.generatorUtils.getDimensionsForPage(this.pageContainer)
     })
 
+    // share stage
+    this.generatorUtils.setStage(this.stage)
+
     this.generatorUtils.drawTemplateRectangle(this.stage)
     this.generatorUtils.drawTemplateRectangleMove(this.stage, () => this.openDataDialog(this.dialog))
     this.stage.draw()
@@ -90,6 +93,7 @@ export class TemplateGeneratorComponent implements OnInit, OnDestroy {
   // ANCHOR Utility functions
 
   convertToPdf() {
+    this.generatorUtils.convertToPdf()
     const canvasUrl = this.stage.toCanvas().toDataURL("image/png", 1)
 
     const doc = new jsPDF({
@@ -118,6 +122,7 @@ export class TemplateGeneratorComponent implements OnInit, OnDestroy {
 
   addTextToRect(text: string) {
     console.log(`add text: ${text}`)
+    this.generatorUtils.addText(this.stage, text)
   }
 
 }

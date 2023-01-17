@@ -4,11 +4,11 @@ import { Stage } from 'konva/lib/Stage';
 export interface ITemplate {
   id: string;
   title: string;
-  rectangleGroups: RectangleGroup[]
+  rectangleGroups: IRectangleGroup[]
   data: any[][] | undefined
 }
 
-export interface RectangleGroup {
+export interface IRectangleGroup {
   id: string;
   position: { x: number, y: number };
   /**
@@ -18,5 +18,7 @@ export interface RectangleGroup {
    */
   dragged: boolean;
   text: string;
+  textId: string;
+  plusSignGroupId: string;
 }
 
