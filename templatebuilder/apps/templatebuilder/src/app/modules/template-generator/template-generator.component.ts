@@ -4,7 +4,6 @@ import Konva from 'konva';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { GeneratorUtils } from '../../utils/GeneratorUtils';
 import { jsPDF } from "jspdf"
-import html2canvas from 'html2canvas';
 import { Store } from '@ngrx/store';
 import { ADD_TEMPLATE } from '../../state/template/template.actions';
 import { ITemplate } from '../../data/schema/ITemplate';

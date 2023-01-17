@@ -1,0 +1,15 @@
+{
+  "$schema": "./node_modules/nx/schemas/workspace-schema.json",
+  "version": 2,
+  "projects": {
+    "templatebuilder": "apps/templatebuilder",
+    "templatebuilder-e2e": "apps/templatebuilder-e2e"
+  },
+  "budgets": [
+    {
+      "type": "initial",
+      "maximumWarning": "1mb",
+      "maximumError": "1mb"
+    }
+  ]
+}
