@@ -1,9 +1,36 @@
 .data-dialog {
-  position: relative;
-  .close {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 1rem;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-areas:
+    'header'
+    'table';
+  grid-template-rows: 10% 90%;
+
+  .dialog__header {
+    grid-area: header;
+    .close {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      top: 0;
+      right: 0;
+      padding: 1rem;
+      background-color: red;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      p {
+        color: white;
+      }
+    }
+  }
+
+  .dialog__warning {
+  }
+
+  .dialog__table {
+    grid-area: table;
   }
 }

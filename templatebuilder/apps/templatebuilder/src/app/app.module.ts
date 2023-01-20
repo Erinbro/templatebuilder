@@ -18,15 +18,29 @@ import { environment } from '../environments/environment';
 import { StoreDevtools, StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { DataDialogComponent } from './modules/template-generator/components/DataDialog/data-dialog.component';
 import { DataExtractorPageComponent } from './modules/data-extractor/data-extractor-page.component';
-import { MatDialogModule } from "@angular/material/dialog"
-import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldModule, } from "@angular/material/form-field"
-import { MatInputModule } from "@angular/material/input"
+import { MatDialogModule } from '@angular/material/dialog';
+import {
+  MAT_FORM_FIELD_DEFAULT_OPTIONS,
+  MatFormFieldModule,
+} from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
-const materialModules = [MatDialogModule, MatFormFieldModule, MatInputModule]
-const materialProviders = [{
-  provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: 'always'
-}]
-const components = []
+import { MatTableModule } from '@angular/material/table';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { ToolbarComponent } from './shared/toolbar/toolbar.component';
+
+const materialModules = [
+  MatDialogModule,
+  MatFormFieldModule,
+  MatInputModule,
+  MatCheckboxModule,
+];
+const materialProviders = [
+  {
+    provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
+    useValue: 'always',
+  },
+];
 
 @NgModule({
   declarations: [
@@ -38,6 +52,7 @@ const components = []
     TemplateGeneratorComponent,
     DataDialogComponent,
     DataExtractorPageComponent,
+    ToolbarComponent,
   ],
   imports: [
     BrowserModule,
@@ -47,9 +62,10 @@ const components = []
     DragDropModule,
     StoreModule.forRoot(reducers),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
-    materialModules
+    materialModules,
+    MatTableModule,
   ],
   providers: [materialProviders],
   bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

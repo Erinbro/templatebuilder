@@ -7,16 +7,13 @@ import { Text, TextConfig } from 'konva/lib/shapes/Text';
 import { Store } from '@ngrx/store';
 import { selectTemplate } from '../state/template/template.selectors';
 import { ITemplateStore } from '../state/template/template.reducer';
-import { Observable } from 'rxjs';
 import { ITemplate, IRectangleGroup } from '../data/schema/ITemplate';
 import { Node } from 'konva/lib/Node';
-import { ADD_TEMPLATE, UPDATE_TEMPLATE } from '../state/template/template.actions';
 import { jsPDF } from 'jspdf';
 import { Circle } from 'konva/lib/shapes/Circle';
 import { Transformer } from 'konva/lib/shapes/Transformer';
 import { nanoid } from 'nanoid';
 import { MatDialog } from '@angular/material/dialog';
-import { Shape, ShapeConfig } from 'konva/lib/Shape';
 
 @Injectable({
   providedIn: "root"

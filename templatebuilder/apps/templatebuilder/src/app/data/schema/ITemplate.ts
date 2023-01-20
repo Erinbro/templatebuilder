@@ -5,7 +5,7 @@ export interface ITemplate {
   id: string;
   title: string;
   rectangleGroups: IRectangleGroup[]
-  data: any[][] | undefined
+  data: { columns: string[], data: any[] } | undefined
 }
 
 export interface IRectangleGroup {

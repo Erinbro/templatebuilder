@@ -1,1 +1,39 @@
-<p>data-extractor-page works!</p>
+<div class="data-extractor">
+  <div class="extractor__input">
+    <templatebuilder-btn-primary
+      (clicked)="fileInput.click()"
+      content="Csv Data"
+    ></templatebuilder-btn-primary>
+    <input hidden #fileInput (input)="parseData()" type="file" id="file" />
+  </div>
+  <div class="extractor__table__container">
+    <div class="template__title">
+      <mat-form-field class="title__input">
+        <mat-label>Title</mat-label>
+        <input
+          matInput
+          [defaultValue]="title"
+          #inputTitle
+          type="text"
+          (change)="changeTitle($event)"
+        />
+      </mat-form-field>
+    </div>
+    <div class="extractor__table" *ngIf="data ? true : false">
+      <mat-table [dataSource]="data.data" class="mat-elevation-z10">
+        <ng-container
+          *ngFor="let disCol of data.columns; let i = index"
+          matColumnDef="{{ disCol }}"
+        >
+          <mat-header-cell *matHeaderCellDef>
+            {{ disCol }}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element[disCol] }}</mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="data.columns"> </mat-header-row>
+        <mat-row *matRowDef="let element; columns: data.columns"></mat-row>
+      </mat-table>
+    </div>
+  </div>
+</div>

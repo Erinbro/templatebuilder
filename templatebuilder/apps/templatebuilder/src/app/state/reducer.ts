@@ -6,7 +6,7 @@ import { ActionReducerMap } from '@ngrx/store';
 // TODO Implement IStoreEntity
 
 
-interface IGlobalState {
+export interface IGlobalState {
   template: ITemplateStore,
 }
 

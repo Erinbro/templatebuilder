@@ -12,7 +12,7 @@ export const SELECT_TEMPLATE = createAction('[Template List] Select Template')
 
 export const ADD_TEMPLATE = createAction('[Template list] Add Template', props<{ template: ITemplate }>())
 
-export const ADD_TEMPLATE_DATA = createAction('[Template list data] Add Template Data', props<{ data: string[][] }>())
+export const ADD_TEMPLATE_DATA = createAction('[Template list data] Add Template Data', props<{ data: { columns: string[], data: any[] } }>())
 
 export const UPDATE_TEMPLATE = createAction('[Template Generator] Update Template', props<{ updatedTemplate: ITemplate }>())
 

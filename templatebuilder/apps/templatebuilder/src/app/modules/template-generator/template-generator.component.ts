@@ -1,16 +1,12 @@
-import { CdkDrag, CdkDragEnd, CdkDragEnter, CdkDragStart, DragRef } from '@angular/cdk/drag-drop';
 import { Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import Konva from 'konva';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { GeneratorUtils } from '../../utils/GeneratorUtils';
 import { jsPDF } from "jspdf"
 import { Store } from '@ngrx/store';
-import { ADD_TEMPLATE } from '../../state/template/template.actions';
-import { ITemplate } from '../../data/schema/ITemplate';
-import { templateStorage, TemplateStorage } from '../../storage/storage';
-import { Stage } from 'konva/lib/Stage';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from "@angular/material/dialog"
+import { MatDialog, } from "@angular/material/dialog"
 import { DataDialogComponent } from './components/DataDialog/data-dialog.component';
+import { Stage } from 'konva/lib/Stage';
 
 
 @Component({
@@ -115,7 +111,9 @@ export class TemplateGeneratorComponent implements OnInit, OnDestroy {
   }
 
   openDataDialog(dialog: MatDialog) {
-    dialog.open(DataDialogComponent, { disableClose: true, data: { text: "" } }).afterClosed()
+    dialog.open(DataDialogComponent,
+      { disableClose: true, data: { text: "" }, height: "100%", width: "100%", maxWidth: "100vw", maxHeight: "100vh", panelClass: "full-screen-modal" }
+    ).afterClosed()
       .subscribe((result) => {
         this.addTextToRect(result.text)
       })

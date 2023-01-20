@@ -5,5 +5,7 @@ const selectTemplateStore = createFeatureSelector<ITemplateStore>(templateFeatur
 
 export const selectTemplate = createSelector(selectTemplateStore, (state) => {
   return state.template
-
+})
+export const selectTemplateData = createSelector(selectTemplateStore, (state) => {
+  return state.template.data
 })

@@ -1,5 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
+import { SelectionModel } from '@angular/cdk/collections';
+import { selectTemplateData } from '../../../../state/template/template.selectors';
+import { IGlobalState } from '../../../../state/reducer';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'templatebuilder-data-dialog',
@@ -7,16 +12,39 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   styleUrls: ['./data-dialog.component.scss'],
 })
 export class DataDialogComponent implements OnInit {
-  constructor(@Inject(MAT_DIALOG_DATA) public data: { text: string }, public dialogRef: MatDialogRef<DataDialogComponent>) { }
+  templateData!: { columns: string[], data: any[] };
+  /**
+   * Decides if we have the template data
+   */
+  templateDataGiven = false
+  selection = new SelectionModel<string[]>(false,)
 
-  ngOnInit(): void { }
 
-  changeText(ev: Event) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: { text: string }, public dialogRef: MatDialogRef<DataDialogComponent>, private store: Store<IGlobalState>, private router: Router) { }
+
+  ngOnInit(): void {
+    this.store.select(selectTemplateData).subscribe((data) => {
+      if (!data) return
+      this.templateDataGiven = true
+      this.templateData = data;
+    })
+  }
+
+  changeSelection(ev: Event) {
     // @ts-ignore
-    this.data.text = ev.target.value
+    this.data.selection = ev.target.value
   }
 
   closeDialog() {
     this.dialogRef.close(this.data)
+  }
+
+  columnSelected(e: any) {
+    console.log(`[DataExtractorComponent] column selected: ${e}`);
+  }
+
+  redirectToDataExtrator() {
+    this.closeDialog()
+    this.router.navigate(["/extract"])
   }
 }
