@@ -1,5 +1,5 @@
 import { createAction, props } from "@ngrx/store";
-import { ITemplate } from '../../data/schema/ITemplate';
+import { ITemplate, IRectangleGroup } from '../../data/schema/ITemplate';
 
 // NOTE The string is the key
 export const LOAD_TEMPLATES = createAction('[Template List] Load Templates');
@@ -16,5 +16,5 @@ export const ADD_TEMPLATE_DATA = createAction('[Template list data] Add Template
 
 export const UPDATE_TEMPLATE = createAction('[Template Generator] Update Template', props<{ updatedTemplate: ITemplate }>())
 
-// export const UPDATE_RECTANGLEGROUPS_POSITION = createAction('[Shape] Update position', props<>())
+export const UPDATE_RECTANGLEGROUP = createAction('[Shape] Update position', props<{ updatedRectangleGroup: IRectangleGroup }>())
 

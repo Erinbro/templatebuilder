@@ -10,6 +10,9 @@ export interface ITemplate {
 
 export interface IRectangleGroup {
   id: string;
+  /**
+   * Position of group
+   */
   position: { x: number, y: number };
   /**
    * Decides if the rectangle has been already dragged.

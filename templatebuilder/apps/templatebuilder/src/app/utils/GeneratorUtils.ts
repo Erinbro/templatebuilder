@@ -14,6 +14,8 @@ import { Circle } from 'konva/lib/shapes/Circle';
 import { Transformer } from 'konva/lib/shapes/Transformer';
 import { nanoid } from 'nanoid';
 import { MatDialog } from '@angular/material/dialog';
+import { UPDATE_RECTANGLEGROUP } from '../state/template/template.actions';
+import { DataDialogComponent } from '../modules/template-generator/components/DataDialog/data-dialog.component';
 
 @Injectable({
   providedIn: "root"
@@ -34,6 +36,7 @@ export class GeneratorUtils {
     this.store.select(selectTemplate).subscribe((template) => {
       this.template = template
     })
+
   }
 
   public setStage(stage: Stage) {
@@ -51,7 +54,7 @@ export class GeneratorUtils {
 
   public convertToPdf() {
 
-    const canvasUrl = this.stage.toCanvas().toDataURL("image/png", 1)
+    // const canvasUrl = this.stage.toCanvas().toDataURL("image/png", 1)
 
     // const doc = new jsPDF({
     //   orientation: "portrait",
@@ -125,22 +128,12 @@ export class GeneratorUtils {
     return { parentWidth, parentHeight }
   }
 
-  // FIXME Add proper data and title
+
   /**
-   * Saves the template to the redux store
-   * @param template
+   * The template rectangle is the static rectangle that
+   * always gets dragged.
+   * @param stage
    */
-  public saveTemplate(stage: Stage) {
-    const groupList = stage.find('Group')
-    console.log(`Group: ${JSON.stringify(groupList)}`)
-    // store
-  }
-
-
-
-
-
-  // ANCHOR SETUP
   public drawTemplateRectangle(stage: Stage) {
     const layer = new Layer()
     const rectangle = new Rect({
@@ -157,10 +150,15 @@ export class GeneratorUtils {
     layer.add(rectangle)
 
     stage.add(layer)
-
   }
 
-  public drawTemplateRectangleMove(stage: Stage, openDataDialog: () => void,) {
+  /**
+   * The dynamic rectangle with event listeners.
+   * If we are given a list of rectangleGroups then we populate the stage with it
+   * @param rectangleGroup
+   */
+  public drawTemplateRectangleMove(rectangleGroups?: IRectangleGroup[]) {
+
 
     const groupId = nanoid()
     const group = new Group({
@@ -220,10 +218,6 @@ export class GeneratorUtils {
       fontSize: 30,
     })
 
-    const templateCopy = { ...this.template }
-    // this.store.dispatch(UPDATE_TEMPLATE({ updatedTemplate: templateCopy }))
-
-
     group.add(...[text, rectangle])
 
     group.on("mouseover", () => {
@@ -248,8 +242,32 @@ export class GeneratorUtils {
 
     group.on("dragend", (ev) => {
 
-      // NOTE If we have already the group saved then we do not add anything!!!
-      if (this.rectangleGroups.find((g) => g.id === ev.target.id())) return;
+      /**
+       * Decides if we have already saved the rectangle
+       */
+      const rectangleAlreadySaved = this.rectangleGroups.find((g) => g.id === ev.target.id())
+
+      // NOTE If we have already the group saved then we do not add the setup!!!
+      if (rectangleAlreadySaved) {
+        const { x, y } = ev.target.position()
+
+        const currentRectangle = this.rectangleGroups.find((r) => r.id === ev.target.id()) as IRectangleGroup
+
+        currentRectangle.position.x = x;
+        currentRectangle.position.y = y;
+
+        // Update locally
+        this.updateRectangleGroupPosition(currentRectangle)
+
+        // Update the position and persist it in the store
+        this.store.dispatch(UPDATE_RECTANGLEGROUP({ updatedRectangleGroup: currentRectangle }))
+
+        return;
+      }
+
+      /**
+       * START SETUP ON DRAGEND
+       */
 
       transformer.nodes([group])
 
@@ -262,21 +280,22 @@ export class GeneratorUtils {
       // NOTE Add to rectangleGroups to track it
       this.rectangleGroups.push(rectangleGroup)
 
-
       group.on("click", (ev) => {
         this.selectedRectangleGroupId = ev.currentTarget.id()
-        openDataDialog()
+        this.openDataDialog()
       })
+
       plusSignGroup.add(plusSignText, plusSign)
-      console.log(`[GeneratorUtils.drawRectangleGroupMove] plusSignGroup.id: ${plusSignGroup.id()}`);
+
       group.add(plusSignGroup)
 
-      this.drawTemplateRectangleMove(stage, openDataDialog)
+      // Add a new rectangle that can be moved
+      this.drawTemplateRectangleMove()
       this.selectedRectangleGroupId = undefined
     })
 
     layer.add(group)
-    stage.add(layer)
+    this.stage.add(layer)
   }
 
   private updateRectangleGroupPosition(movedRectangleGroup: any) {
@@ -383,5 +402,55 @@ export class GeneratorUtils {
     return this.stage.find((n: any) => {
       return n.id() === id
     })
+  }
+
+  /**
+   * Populates the stage with the rectangles.
+   * The function is called when the generator page is loaded by the
+   * TemplateGeneratorComponent.
+   * We have two options:
+   *
+   * 1) The user loads the stage for the first time. We ascertain this
+   * by checking if we have data in template.rectangleGroups in the store
+   * 2) The user already has moved rectangles.
+   */
+  setup() {
+    if (!this.template) return
+
+
+    /**
+     * If it is the first time we visit the stage
+     */
+    if (this.template.rectangleGroups.length === 0) {
+      this.drawTemplateRectangle(this.stage)
+      this.drawTemplateRectangleMove()
+      this.stage.draw()
+    }
+
+    /**
+     * If we already have moved rectangles
+     */
+    else {
+      const rectangleGroups = this.template.rectangleGroups;
+
+      rectangleGroups.forEach((r) => {
+        this.drawTemplateRectangleMove()
+      })
+    }
+
+  }
+
+  openDataDialog() {
+    this.dataDialog.open(DataDialogComponent,
+      { disableClose: true, data: { text: "" }, height: "100%", width: "100%", maxWidth: "100vw", maxHeight: "100vh", panelClass: "full-screen-modal" }
+    ).afterClosed()
+      .subscribe((result) => {
+        this.addTextToRect(result.text)
+      })
+  }
+
+  addTextToRect(text: string) {
+    console.log(`add text: ${text}`)
+    this.addText(this.stage, text)
   }
 }

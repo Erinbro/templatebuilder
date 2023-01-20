@@ -1,12 +1,15 @@
-import { Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, } from '@angular/core';
 import Konva from 'konva';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, } from 'rxjs';
 import { GeneratorUtils } from '../../utils/GeneratorUtils';
 import { jsPDF } from "jspdf"
 import { Store } from '@ngrx/store';
 import { MatDialog, } from "@angular/material/dialog"
 import { DataDialogComponent } from './components/DataDialog/data-dialog.component';
 import { Stage } from 'konva/lib/Stage';
+import { IRectangleGroup, ITemplate } from '../../data/schema/ITemplate';
+import { selectTemplate } from '../../state/template/template.selectors';
+import { IGlobalState } from '../../state/reducer';
 
 
 @Component({
@@ -15,22 +18,9 @@ import { Stage } from 'konva/lib/Stage';
   styleUrls: ['./template-generator.component.scss'],
 })
 export class TemplateGeneratorComponent implements OnInit, OnDestroy {
-  /**
-   * A4 format
-   */
-  pageRatio = { width: 210, height: 297 }
-  /**
-   * Multiply this with the width when scalling
-   */
-  pageRatioWidth = 210 / 297
-  /**
-   * Multiply this with the height when scalling
-   */
-  pageRatioHeight = 297 / 210
 
-  rectangles = new BehaviorSubject<{ [id: number]: Konva.Rect }>({})
-  rectangleList = new BehaviorSubject<Konva.Rect[]>([])
-
+  rectangleGroups = new BehaviorSubject<IRectangleGroup[]>([])
+  template!: ITemplate
 
   pageContainer!: HTMLDivElement
   konvaPage!: HTMLCanvasElement
@@ -38,10 +28,16 @@ export class TemplateGeneratorComponent implements OnInit, OnDestroy {
   htmlRectangleTemplate!: HTMLDivElement
 
 
-  constructor(private elementRef: ElementRef, private generatorUtils: GeneratorUtils, private store: Store, public dialog: MatDialog) { }
+  constructor(private elementRef: ElementRef, private generatorUtils: GeneratorUtils, private store: Store<IGlobalState>, public dialog: MatDialog) { }
 
 
   ngOnInit(): void {
+    this.generatorUtils.setDataDialog(this.dialog)
+
+    this.store.select(selectTemplate).subscribe((template) => {
+      if (!template) return
+      this.template = template
+    })
 
     /**
      * ANCHOR Save the parent of the canvas
@@ -61,26 +57,12 @@ export class TemplateGeneratorComponent implements OnInit, OnDestroy {
     // share stage
     this.generatorUtils.setStage(this.stage)
 
-    this.generatorUtils.drawTemplateRectangle(this.stage)
-    this.generatorUtils.drawTemplateRectangleMove(this.stage, () => this.openDataDialog(this.dialog))
-    this.stage.draw()
-
-    console.log(`stage: ${this.stage}`)
-
-    /**
-     * ANCHOR Save the template to the redux store.
-     * With this the generatorUils service has also access to the stage
-     */
-    this.generatorUtils.saveTemplate(this.stage)
+    this.generatorUtils.setup();
 
     /**
      * Save the canvas HTML refernce
      */
     this.konvaPage = this.elementRef.nativeElement.querySelector(".page__container canvas")
-
-    console.log(`parent element: ${this.elementRef.nativeElement.getBoundingClientRect().width}`)
-
-
   }
 
   ngOnDestroy(): void {
@@ -104,24 +86,6 @@ export class TemplateGeneratorComponent implements OnInit, OnDestroy {
 
     doc.addImage(canvasUrl, 'PNG', 0, 0, width, height)
     doc.save("jaime.pdf")
-  }
-
-  saveTemplate(stage: Stage) {
-    this.generatorUtils.saveTemplate(stage)
-  }
-
-  openDataDialog(dialog: MatDialog) {
-    dialog.open(DataDialogComponent,
-      { disableClose: true, data: { text: "" }, height: "100%", width: "100%", maxWidth: "100vw", maxHeight: "100vh", panelClass: "full-screen-modal" }
-    ).afterClosed()
-      .subscribe((result) => {
-        this.addTextToRect(result.text)
-      })
-  }
-
-  addTextToRect(text: string) {
-    console.log(`add text: ${text}`)
-    this.generatorUtils.addText(this.stage, text)
   }
 
 }

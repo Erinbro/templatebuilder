@@ -11,11 +11,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { TemplateGeneratorComponent } from './modules/template-generator/template-generator.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { GeneratorUtils } from './utils/GeneratorUtils';
 import { StoreModule } from '@ngrx/store';
 import { reducers } from './state/reducer';
 import { environment } from '../environments/environment';
-import { StoreDevtools, StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { DataDialogComponent } from './modules/template-generator/components/DataDialog/data-dialog.component';
 import { DataExtractorPageComponent } from './modules/data-extractor/data-extractor-page.component';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -28,12 +27,15 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ToolbarComponent } from './shared/toolbar/toolbar.component';
+import { MatToolbarModule } from "@angular/material/toolbar"
+import { RouterModule } from '@angular/router';
 
 const materialModules = [
   MatDialogModule,
   MatFormFieldModule,
   MatInputModule,
   MatCheckboxModule,
+  MatToolbarModule
 ];
 const materialProviders = [
   {
@@ -64,8 +66,9 @@ const materialProviders = [
     !environment.production ? StoreDevtoolsModule.instrument() : [],
     materialModules,
     MatTableModule,
+    RouterModule
   ],
   providers: [materialProviders],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

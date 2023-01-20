@@ -1,6 +1,7 @@
 import { createReducer, on } from '@ngrx/store';
 import { ITemplate } from '../../data/schema/ITemplate';
 import * as templateStoreActions from "./template.actions"
+import { IGlobalState } from '../reducer';
 
 export const templateFeatureName = 'template';
 
@@ -49,4 +50,10 @@ export const templateReducer = createReducer(
 
     return stateCopy
   }),
+  on(templateStoreActions.UPDATE_RECTANGLEGROUP, (state, { updatedRectangleGroup }) => {
+    const storeCopy = JSON.parse(JSON.stringify(state)) as ITemplateStore
+    const id = storeCopy.template.rectangleGroups.findIndex((r) => r.id === updatedRectangleGroup.id)
+    storeCopy.template.rectangleGroups[id] = updatedRectangleGroup
+    return storeCopy;
+  })
 )

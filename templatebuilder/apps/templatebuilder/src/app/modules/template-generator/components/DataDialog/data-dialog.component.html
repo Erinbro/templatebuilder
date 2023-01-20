@@ -1,4 +1,4 @@
-<mat-dialog-content class="data-dialog">
+<mat-dialog-content class="data-dialog" #dataDialog>
   <div class="dialog__header">
     <div class="close" (click)="closeDialog()">
       <p>X</p>
@@ -16,7 +16,7 @@
     <p>Please select first the data</p>
   </div>
 
-  <div class="dialog__table" *ngIf="templateData.data ? true : false">
+  <div class="dialog__table" *ngIf="templateData ? true : false">
     <mat-table [dataSource]="templateData.data" class="mat-elevation-z10">
       <ng-container
         *ngFor="let disCol of templateData.columns; let i = index"

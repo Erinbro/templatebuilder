@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { SelectionModel } from '@angular/cdk/collections';
 import { selectTemplateData } from '../../../../state/template/template.selectors';
@@ -18,9 +18,10 @@ export class DataDialogComponent implements OnInit {
    */
   templateDataGiven = false
   selection = new SelectionModel<string[]>(false,)
+  @ViewChild("dataDialog") dataDialog!: MatDialog
 
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: { text: string }, public dialogRef: MatDialogRef<DataDialogComponent>, private store: Store<IGlobalState>, private router: Router) { }
+  constructor(@Inject(MAT_DIALOG_DATA) public data: { text: string }, public dialogRef: MatDialogRef<DataDialogComponent>, private store: Store<IGlobalState>, private router: Router,) { }
 
   ngOnInit(): void {
     this.store.select(selectTemplateData).subscribe((data) => {
@@ -28,6 +29,7 @@ export class DataDialogComponent implements OnInit {
       this.templateDataGiven = true
       this.templateData = data;
     })
+
   }
 
   changeSelection(ev: Event) {

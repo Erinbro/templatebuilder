@@ -1,0 +1,14 @@
+.toolbar {
+  height: 10vh;
+  .toolbar__listing {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+
+    li {
+      padding: 1rem;
+      a {
+      }
+    }
+  }
+}

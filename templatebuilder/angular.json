@@ -4,12 +4,5 @@
   "projects": {
     "templatebuilder": "apps/templatebuilder",
     "templatebuilder-e2e": "apps/templatebuilder-e2e"
-  },
-  "budgets": [
-    {
-      "type": "initial",
-      "maximumWarning": "500kb",
-      "maximumError": "1mb"
-    }
-  ]
+  }
 }
