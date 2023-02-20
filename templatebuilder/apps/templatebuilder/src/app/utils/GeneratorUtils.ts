@@ -251,7 +251,7 @@ export class GeneratorUtils {
       if (rectangleAlreadySaved) {
         const { x, y } = ev.target.position()
 
-        const currentRectangle = this.rectangleGroups.find((r) => r.id === ev.target.id()) as IRectangleGroup
+        const currentRectangle = { ...this.rectangleGroups.find((r) => r.id === ev.target.id()) } as IRectangleGroup
 
         currentRectangle.position.x = x;
         currentRectangle.position.y = y;
@@ -450,7 +450,6 @@ export class GeneratorUtils {
   }
 
   addTextToRect(text: string) {
-    console.log(`add text: ${text}`)
     this.addText(this.stage, text)
   }
 }

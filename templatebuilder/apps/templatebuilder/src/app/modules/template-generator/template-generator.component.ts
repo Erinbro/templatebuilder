@@ -73,19 +73,19 @@ export class TemplateGeneratorComponent implements OnInit, OnDestroy {
 
   convertToPdf() {
     this.generatorUtils.convertToPdf()
-    const canvasUrl = this.stage.toCanvas().toDataURL("image/png", 1)
+    // const canvasUrl = this.stage.toCanvas().toDataURL("image/png", 1)
 
-    const doc = new jsPDF({
-      orientation: "portrait",
-      format: "a4",
-      unit: "mm"
-    })
+    // const doc = new jsPDF({
+    //   orientation: "portrait",
+    //   format: "a4",
+    //   unit: "mm"
+    // })
 
-    const width = doc.internal.pageSize.getWidth()
-    const height = doc.internal.pageSize.getHeight()
+    // const width = doc.internal.pageSize.getWidth()
+    // const height = doc.internal.pageSize.getHeight()
 
-    doc.addImage(canvasUrl, 'PNG', 0, 0, width, height)
-    doc.save("jaime.pdf")
+    // doc.addImage(canvasUrl, 'PNG', 0, 0, width, height)
+    // doc.save("output.pdf")
   }
 
 }

@@ -66,7 +66,8 @@ const materialProviders = [
     !environment.production ? StoreDevtoolsModule.instrument() : [],
     materialModules,
     MatTableModule,
-    RouterModule
+    RouterModule,
+    StoreDevtoolsModule.instrument({})
   ],
   providers: [materialProviders],
   bootstrap: [AppComponent],

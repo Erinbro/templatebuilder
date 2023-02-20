@@ -5,6 +5,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { selectTemplateData } from '../../../../state/template/template.selectors';
 import { IGlobalState } from '../../../../state/reducer';
 import { Router } from '@angular/router';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 
 @Component({
   selector: 'templatebuilder-data-dialog',
@@ -33,6 +34,7 @@ export class DataDialogComponent implements OnInit {
   }
 
   changeSelection(ev: Event) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     this.data.selection = ev.target.value
   }
@@ -41,8 +43,11 @@ export class DataDialogComponent implements OnInit {
     this.dialogRef.close(this.data)
   }
 
-  columnSelected(e: any) {
-    console.log(`[DataExtractorComponent] column selected: ${e}`);
+  columnSelected(e: MatCheckboxChange) {
+    const checked = e.checked;
+    const id = e.source._elementRef.nativeElement.id
+    console.log(`id: ${id}, checked: ${checked}`);
+    this.data.text = id
   }
 
   redirectToDataExtrator() {
